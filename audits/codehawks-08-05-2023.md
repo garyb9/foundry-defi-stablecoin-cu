@@ -888,7 +888,7 @@ Whereas, on some chains, such as Arbitrum and Avalanche, *3 hours* is too small.
             priceFeed.latestRoundData();
 
         uint256 secondsSince = block.timestamp - updatedAt;
-@>      if (secondsSince > TIMEOUT) revert OracleLib__StalePrice();
+@>      if (secondsSince > TIMEOUT) revert StalePrice();
 
         return (roundId, answer, startedAt, updatedAt, answeredInRound);
     }
@@ -941,7 +941,7 @@ The `staleCheckLatestRoundData` function in `OracleLib.sol` is only checking for
             priceFeed.latestRoundData();
 
         uint256 secondsSince = block.timestamp - updatedAt;
-        if (secondsSince > TIMEOUT) revert OracleLib__StalePrice();
+        if (secondsSince > TIMEOUT) revert StalePrice();
 
         return (roundId, answer, startedAt, updatedAt, answeredInRound);
     }
@@ -1191,7 +1191,7 @@ The DSC protocol utilizes the `staleCheckLatestRoundData()` for querying price d
 @>          priceFeed.latestRoundData();
 
         uint256 secondsSince = block.timestamp - updatedAt;
-@>      if (secondsSince > TIMEOUT) revert OracleLib__StalePrice();
+@>      if (secondsSince > TIMEOUT) revert StalePrice();
 
         return (roundId, answer, startedAt, updatedAt, answeredInRound);
     }
@@ -2020,7 +2020,7 @@ function staleCheckLatestRoundData(AggregatorV3Interface priceFeed)
 	+ (, int256 answer,, uint256 updatedAt,) = priceFeed.latestRoundData();
 
     uint256 secondsSince = block.timestamp - updatedAt;
-    if (secondsSince > TIMEOUT) revert OracleLib__StalePrice();
+    if (secondsSince > TIMEOUT) revert StalePrice();
 
     - return (roundId, answer, startedAt, updatedAt, answeredInRound);
 	+ return (answer);
@@ -3561,7 +3561,7 @@ Manual review
             priceFeed.latestRoundData();
         // @audit also check 1. if the answer is more than 0, and check 2. the current roundId is more than the previous roundId.
         uint256 secondsSince = block.timestamp - updatedAt;
-        if (secondsSince > TIMEOUT) revert OracleLib__StalePrice();
+        if (secondsSince > TIMEOUT) revert StalePrice();
 
         return (roundId, answer, startedAt, updatedAt, answeredInRound);
     }
@@ -3680,7 +3680,7 @@ Reference:  https://gist.github.com/IllIllI000/3dc79d25acccfa16dee4e83ffdc6ffde
 ```solidity
 file: /src/libraries/OracleLib.sol
 
-30        if (secondsSince > TIMEOUT) revert OracleLib__StalePrice();
+30        if (secondsSince > TIMEOUT) revert StalePrice();
 
 ```
 https://github.com/Cyfrin/2023-07-foundry-defi-stablecoin/blob/main/src/libraries/OracleLib.sol#L30

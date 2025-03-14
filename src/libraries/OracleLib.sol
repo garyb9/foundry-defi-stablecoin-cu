@@ -13,7 +13,7 @@ import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/
  * So if the Chainlink network explodes and you have a lot of money locked in the protocol... too bad.
  */
 library OracleLib {
-    error OracleLib__StalePrice();
+    error StalePrice();
 
     uint256 private constant TIMEOUT = 3 hours;
 
@@ -26,10 +26,10 @@ library OracleLib {
             chainlinkFeed.latestRoundData();
 
         if (updatedAt == 0 || answeredInRound < roundId) {
-            revert OracleLib__StalePrice();
+            revert StalePrice();
         }
         uint256 secondsSince = block.timestamp - updatedAt;
-        if (secondsSince > TIMEOUT) revert OracleLib__StalePrice();
+        if (secondsSince > TIMEOUT) revert StalePrice();
 
         return (roundId, answer, startedAt, updatedAt, answeredInRound);
     }
