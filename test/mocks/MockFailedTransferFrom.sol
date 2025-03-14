@@ -5,9 +5,9 @@ import { ERC20Burnable, ERC20 } from "@openzeppelin/contracts/token/ERC20/extens
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MockFailedTransferFrom is ERC20Burnable, Ownable {
-    error DecentralizedStableCoin__AmountMustBeMoreThanZero();
-    error DecentralizedStableCoin__BurnAmountExceedsBalance();
-    error DecentralizedStableCoin__NotZeroAddress();
+    error AmountMustBeMoreThanZero();
+    error BurnAmountExceedsBalance();
+    error NotZeroAddress();
 
     /*
     In future versions of OpenZeppelin contracts package, Ownable must be declared with an address of the contract owner
@@ -22,10 +22,10 @@ contract MockFailedTransferFrom is ERC20Burnable, Ownable {
     function burn(uint256 _amount) public override onlyOwner {
         uint256 balance = balanceOf(msg.sender);
         if (_amount <= 0) {
-            revert DecentralizedStableCoin__AmountMustBeMoreThanZero();
+            revert AmountMustBeMoreThanZero();
         }
         if (balance < _amount) {
-            revert DecentralizedStableCoin__BurnAmountExceedsBalance();
+            revert BurnAmountExceedsBalance();
         }
         super.burn(_amount);
     }

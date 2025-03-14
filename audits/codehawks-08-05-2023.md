@@ -1063,10 +1063,10 @@ Block the `burnFrom` function of **OZ ERC20Burnable** contract
 
 ```solidity
 @@ -40,6 +40,7 @@ contract DecentralizedStableCoin is ERC20Burnable, Ownable {
-     error DecentralizedStableCoin__MustBeMoreThanZero();
-     error DecentralizedStableCoin__BurnAmountExceedsBalance();
-     error DecentralizedStableCoin__NotZeroAddress();
-+    error DecentralizedStableCoin__BlockFunction();
+     error MustBeMoreThanZero();
+     error BurnAmountExceedsBalance();
+     error NotZeroAddress();
++    error BlockFunction();
 
      constructor() ERC20("DecentralizedStableCoin", "DSC") {}
 
@@ -1075,12 +1075,12 @@ Block the `burnFrom` function of **OZ ERC20Burnable** contract
      }
 
 +    function burnFrom(address, uint256) public pure override {
-+        revert DecentralizedStableCoin__BlockFunction();
++        revert BlockFunction();
 +    }
 +
      function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
          if (_to == address(0)) {
-             revert DecentralizedStableCoin__NotZeroAddress();
+             revert NotZeroAddress();
 ```
 ## <a id='M-06'></a>M-06. Double-spending vulnerability leads to a disruption of the DSC token
 
@@ -2369,9 +2369,9 @@ index d3652a5..58cd9b7 100644
 +contract DecentralizedStableCoin is ERC20 {
 +    address private immutable i_owner;
 +
-     error DecentralizedStableCoin__MustBeMoreThanZero();
-     error DecentralizedStableCoin__BurnAmountExceedsBalance();
-     error DecentralizedStableCoin__NotZeroAddress();
+     error MustBeMoreThanZero();
+     error BurnAmountExceedsBalance();
+     error NotZeroAddress();
  
 -    constructor() ERC20("DecentralizedStableCoin", "DSC") {}
 +    constructor(address _owner) ERC20("DecentralizedStableCoin", "DSC") {
@@ -2383,10 +2383,10 @@ index d3652a5..58cd9b7 100644
 +        require(i_owner == msg.sender, "Only owner can burn");
          uint256 balance = balanceOf(msg.sender);
          if (_amount <= 0) {
-             revert DecentralizedStableCoin__MustBeMoreThanZero();
+             revert MustBeMoreThanZero();
 @@ -51,10 +56,11 @@ contract DecentralizedStableCoin is ERC20Burnable, Ownable {
          if (balance < _amount) {
-             revert DecentralizedStableCoin__BurnAmountExceedsBalance();
+             revert BurnAmountExceedsBalance();
          }
 -        super.burn(_amount);
 +        _burn(msg.sender, _amount);
@@ -2396,7 +2396,7 @@ index d3652a5..58cd9b7 100644
 +    function mint(address _to, uint256 _amount) external returns (bool) {
 +        require(i_owner == msg.sender, "Only owner can mint");
          if (_to == address(0)) {
-             revert DecentralizedStableCoin__NotZeroAddress();
+             revert NotZeroAddress();
          }
 @@ -64,4 +70,8 @@ contract DecentralizedStableCoin is ERC20Burnable, Ownable {
          _mint(_to, _amount);
@@ -2613,10 +2613,10 @@ File: DSCEngine.sol
 File: DecentralizedStableCoin.sol
 57:     function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
 58:         if (_to == address(0)) {
-59:             revert DecentralizedStableCoin__NotZeroAddress();
+59:             revert NotZeroAddress();
 60:         }
 61:         if (_amount <= 0) {
-62:             revert DecentralizedStableCoin__MustBeMoreThanZero();
+62:             revert MustBeMoreThanZero();
 63:         }
 64:         _mint(_to, _amount);
 65:         return true;
@@ -2814,13 +2814,13 @@ Manual Analysis
 ## Recommendations
 Following on from above, Custom errors can be named more aligned, shorter and more descriptive and consistent e.g language of ‘Not’ or of ‘Must’ to emphasize what went wrong e.g ‘Must’ , ‘Is’, ‘Not’, ‘Only’ ‘IsOk’ or end with ‘Failed’ etc 
 DecentralizedStableCoin.sol
-DecentralizedStableCoin__MustBeMoreThanZero() 
-DecentralizedStableCoin__MustNotExceedBalance()
-DecentralizedStableCoin__MustNotBeZeroAddress();
+MustBeMoreThanZero() 
+MustNotExceedBalance()
+MustNotBeZeroAddress();
 Or ‘Not’ a requirement format 
-DecentralizedStableCoin__NotMoreThanZero() 
-DecentralizedStableCoin__NotLessThanBalance()
-DecentralizedStableCoin__NotDifferentToZeroAddress();
+NotMoreThanZero() 
+NotLessThanBalance()
+NotDifferentToZeroAddress();
 DSCEngine.sol consistent use of 'Must' language as in below 
 DSCEngine__NeedsMoreThanZero() -> DSCEngine__MustBeMoreThanZero()
 DSCEngine__TokenAddressesAndPriceFeedAddressesMustBeSameLength()-> DSCEngine_MustBeSameLengthTokenAndPriceFeedAddresses()

@@ -41,9 +41,9 @@ import { MockV3Aggregator } from "./MockV3Aggregator.sol";
 DSCEngine smart contract.
  */
 contract MockMoreDebtDSC is ERC20Burnable, Ownable {
-    error DecentralizedStableCoin__AmountMustBeMoreThanZero();
-    error DecentralizedStableCoin__BurnAmountExceedsBalance();
-    error DecentralizedStableCoin__NotZeroAddress();
+    error AmountMustBeMoreThanZero();
+    error BurnAmountExceedsBalance();
+    error NotZeroAddress();
 
     address mockAggregator;
 
@@ -64,20 +64,20 @@ contract MockMoreDebtDSC is ERC20Burnable, Ownable {
         MockV3Aggregator(mockAggregator).updateAnswer(0);
         uint256 balance = balanceOf(msg.sender);
         if (_amount <= 0) {
-            revert DecentralizedStableCoin__AmountMustBeMoreThanZero();
+            revert AmountMustBeMoreThanZero();
         }
         if (balance < _amount) {
-            revert DecentralizedStableCoin__BurnAmountExceedsBalance();
+            revert BurnAmountExceedsBalance();
         }
         super.burn(_amount);
     }
 
     function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
         if (_to == address(0)) {
-            revert DecentralizedStableCoin__NotZeroAddress();
+            revert NotZeroAddress();
         }
         if (_amount <= 0) {
-            revert DecentralizedStableCoin__AmountMustBeMoreThanZero();
+            revert AmountMustBeMoreThanZero();
         }
         _mint(_to, _amount);
         return true;
