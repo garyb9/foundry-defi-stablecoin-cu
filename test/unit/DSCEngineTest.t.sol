@@ -323,7 +323,6 @@ contract DSCEngineTest is StdCheats, Test {
         vm.stopPrank();
     }
 
-
     function testEmitCollateralRedeemedWithCorrectArgs() public depositedCollateral {
         vm.expectEmit(true, true, true, true, address(dsce));
         emit CollateralRedeemed(user, user, weth, amountCollateral);
